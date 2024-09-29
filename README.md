@@ -1,246 +1,247 @@
-# 嵌入式Linux 实验六
+# Embedded Linux Lab 6
 
-# 实验目的
+## Purpose
 
-- 熟悉Qt Creator开发环境的使用。
-- 学习如何在Qt中创建一个基本的GUI应用程序。
-- 理解Qt信号与槽机制的工作原理。
-- 实现一个基本的计数器应用程序，按钮每次点击时，计数器加一。
+- Become familiar with the use of the Qt Creator development environment.
+- Learn how to create a basic GUI application in Qt.
+- Understand the working principle of Qt's signal and slot mechanism.
+- Implement a simple counter application, where the counter increments each time a button is clicked.
 
-# 实验环境准备
+## Lab Environment
 
-1. **Qt版本**：Qt Creator 6.8.0
-2. **操作系统**：Ubuntu 22.04.2
+1. **Qt Version**: Qt Creator 6.8.0
+2. **Operating System**: Ubuntu 22.04.2
 
-# 安装Qt
+## Installing Qt
 
-在Ubuntu系统的浏览器打开这个链接：[Qt在线安装器](https://www.qt.io/download-qt-installer-oss?hsCtaTracking=99d9dd4f-5681-48d2-b096-470725510d34|074ddad0-fdef-4e53-8aa8-5e8a876d6ab4)
+Open this link in your Ubuntu system browser: [Qt Online Installer](https://www.qt.io/download-qt-installer-oss?hsCtaTracking=99d9dd4f-5681-48d2-b096-470725510d34|074ddad0-fdef-4e53-8aa8-5e8a876d6ab4).
 
-如果网页无响应可以**科学上网**。
+If the webpage is unresponsive, consider using **VPN** for access.
 
-选择**Linux x64**并下载。
+Select **Linux x64** and download the installer.
 
 ![image-20240929102932532](README.assets/image-20240929102932532.png)
 
-找到下载的文件，打开终端输入`chmod +x  `后拖入文件，回车后即可为该文件添加**可执行权限**。
+Locate the downloaded file, open a terminal, and enter `chmod +x` followed by dragging the file into the terminal. Press Enter to grant the file **executable permissions**.
 
 ![image-20240929103831867](README.assets/image-20240929103831867.png)
 
-需要你在[Qt官网](https://www.qt.io/)中完成Qt账号的注册。返回Qt安装程序，输入账号密码，点击下一步。
+You will need to register for a Qt account on the [Qt official website](https://www.qt.io/). Return to the Qt installer, input your account credentials, and click next.
 
 ![image-20240929104734859](README.assets/image-20240929104734859.png)
 
-该勾选的勾选上，下一步后继续下一步。
+Check the appropriate boxes, and continue to click next.
 
 ![image-20240929105142680](README.assets/image-20240929105142680.png)
 
-可选择**不发送统计信息**到Qt，下一步。
+You can choose **not to send statistical data** to Qt, then click next.
 
 ![image-20240929105249683](README.assets/image-20240929105249683.png)
 
-选择**为桌面开发**，下一步。
+Choose **Desktop Development**, then click next.
 
 ![image-20240929110118148](README.assets/image-20240929110118148.png)
 
-同意协议后下一步，点击安装即出现下载安装界面。国内也是可以正常下载的，如果有下载问题可点击重试。
+Agree to the terms, click next, and then the installer will start downloading and installing. If any issues arise during the download, retry as needed.
 
 ![image-20240929110307094](README.assets/image-20240929110307094.png)
 
-安装完成后，在左下角应用里找到**Qt Creator**并打开。
+Once the installation is complete, find **Qt Creator** in the application menu and open it.
 
 ![image-20240929103621167](README.assets/image-20240929103621167.png)
 
-> **如果显示下述界面**，则提示运行Qt需要安装依赖项。
+> **If the following screen appears**, it indicates that dependencies are needed to run Qt.
 >
 > ![image-20240929114220870](README.assets/image-20240929114220870.png)
 >
-> 在**终端**输入安装指令并回车，安装完成后打开Qt Creator即可。
+> In the **terminal**, enter the following command to install the required packages, then restart Qt Creator.
 >
 > ```bash
 > sudo apt install libxcb-cursor0
 > ```
 
-# 创建项目
+## Creating a Project
 
-首先，打开Qt Creator，按照以下步骤创建一个新的Qt Widgets应用程序：
+First, open Qt Creator and follow the steps below to create a new Qt Widgets application:
 
-1. 在Qt Creator中点击“文件” -> “新建项目”。
+1. In Qt Creator, click “File” -> “New File or Project”.
 
    ![image-20240929124920834](README.assets/image-20240929124920834.png)
 
-2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
+2. In the window that pops up, select "Qt Widgets Application" under "Applications".
 
    ![image-20240929125121259](README.assets/image-20240929125121259.png)
 
-3. 设置项目名称，例如“ButtonCounter”，并选择保存路径。
+3. Set the project name, for example, “ButtonCounter,” and choose a location to save the project.
 
    ![image-20240929125229402](README.assets/image-20240929125229402.png)
 
-4. **后续的选择页面保持默认**即可，继续点击“下一步”直到项目创建完成。
+4. **For the subsequent selection pages, keep the default settings**, and continue to click "Next" until the project is created.
 
-创建项目后，Qt会自动生成几个重要的文件，包括：
+Once the project is created, Qt will automatically generate several important files, including:
 
-- **main.cpp**：程序入口文件。
-- **mainwindow.ui**：主窗口的UI设计文件。
-- **mainwindow.h** 和 **mainwindow.cpp**：主窗口类的头文件和实现文件。
+- **main.cpp**: The entry point of the program.
+- **mainwindow.ui**: The UI design file for the main window.
+- **mainwindow.h** and **mainwindow.cpp**: The header and implementation files for the main window class.
 
 ![image-20240929125419652](README.assets/image-20240929125419652.png)
 
-# 设计用户界面
+## Designing the User Interface
 
 ![image-20240929125720176](README.assets/image-20240929125720176.png)
 
-打开`mainwindow.ui`，进入Qt的可视化UI设计器，按以下步骤设计界面：
+Open `mainwindow.ui` to enter Qt’s visual UI designer. Follow these steps to design the interface:
 
-1. 从左侧的“Widget Box”中拖拽一个**Push Button**到中央界面，并将按钮的`text`属性设置为“ClickMe!”。
+1. From the “Widget Box” on the left, drag a **Push Button** to the central area and set the button’s `text` property to "ClickMe!".
 
    ![image-20240929130122344](README.assets/image-20240929130122344.png)
 
-2. 再拖拽一个**Label**用于显示点击次数，默认显示文本为“Number: 0”。
+2. Drag a **Label** to display the click count, with default text set to "Number: 0".
 
    ![image-20240929130445562](README.assets/image-20240929130445562.png)
 
-3. 调整按钮和标签的位置和大小，以确保布局合理。
+3. Adjust the positions and sizes of the button and label to ensure a reasonable layout.
 
-设计完成后，记得保存UI设计（Ctrl+S）。
+After completing the design, remember to save the UI design (Ctrl+S).
 
-# 信号与槽机制的解读
+## Explanation of the Signal and Slot Mechanism
 
-在Qt编程中，**信号与槽机制**是用于在对象之间传递信息的一种灵活机制。它的关键作用在于**解耦合**，即发出信号的一方不需要知道接收方是谁，也不需要关心它如何处理这个信号。
+In Qt programming, the **signal and slot mechanism** is a flexible system for passing information between objects. The key feature is **decoupling**; the signal emitter does not need to know who the receiver is or how the signal is processed.
 
-### 为什么不直接操作？
-在很多情况下，我们希望不同的对象之间能保持独立性。例如，假设你在开发一个复杂的应用程序，按钮的点击需要触发很多不同的操作：有的更新界面，有的保存数据，有的发送通知。如果每个按钮都直接控制这些操作，会让代码变得非常复杂和难以维护。
+### Why Not Direct Manipulation?
 
-信号与槽机制的目的就是**简化通信流程**，让对象之间不用直接互相操作，而是通过信号的形式告诉系统“发生了什么事”，由系统将这个信号传递给相应的处理函数（槽）。
+In many cases, we want different objects to remain independent of each other. For example, suppose you are developing a complex application where button clicks trigger many different actions: some update the UI, some save data, and others send notifications. If each button directly controlled these actions, the code would become very complex and difficult to maintain.
 
-### 合适的例子
-想象一下你在机场等飞机。机场有一个广播系统，负责通知乘客航班信息。这个广播系统可以理解为“信号”的发射者。机场的每位乘客就像是“槽”，接收这些信息并根据通知采取行动（例如：登机）。
+The purpose of the signal and slot mechanism is to **simplify communication**, allowing objects to interact through signals without directly manipulating each other. The signal simply informs the system of an event, and the system passes this signal to the appropriate handler (slot).
 
-这里的关键在于：
-- **广播系统（信号）** 并不需要了解每个乘客的具体情况。它只负责发出消息。
-- **乘客（槽）** 根据收到的信息自行决定要做什么，比如去登机口、继续等候等。
+### Appropriate Analogy
 
-这个例子和信号与槽机制类似：信号只负责传递消息，至于消息由哪个对象接收、如何处理，完全是由槽来决定的。信号和槽之间可以是多对多的关系：一个信号可以连接多个槽，多个信号也可以连接同一个槽。
+Imagine waiting for your flight at an airport. The airport’s announcement system acts as a “signal” broadcaster. Each passenger is like a “slot,” receiving information and acting accordingly (e.g., boarding the plane).
 
-### 信号与槽的优势
-1. **灵活性**：信号与槽使得程序各部分更加灵活，可以根据需要在运行时动态连接和断开信号与槽。
-2. **解耦合**：发送信号的对象不需要了解接收者的内部细节，只需发出信号，由接收者（槽）处理。
-3. **可扩展性**：通过信号与槽，程序可以轻松地添加新功能，而无需修改已有的代码。
+Key points:
 
-# 实现信号与槽连接
+- The **announcement system (signal)** does not need to know each passenger’s specific details. It just broadcasts the message.
+- **Passengers (slots)** react to the message by taking their own actions, such as heading to the boarding gate or continuing to wait.
 
-## 在头文件中定义计数器变量
+This is similar to how the signal and slot mechanism works: signals only send messages, and how those messages are processed is decided by the slots. The relationship between signals and slots can be many-to-many: one signal can be connected to multiple slots, and multiple signals can be connected to the same slot.
 
-打开`mainwindow.h`，在主窗口类的私有部分添加一个整数类型的成员变量`clickCount`，用于存储按钮的点击次数：
+### Advantages of Signals and Slots
+
+1. **Flexibility**: Signals and slots make the program more flexible, allowing signals and slots to be dynamically connected and disconnected during runtime.
+2. **Decoupling**: The object sending the signal does not need to know the internal details of the receiver; it just emits the signal, which is handled by the slot.
+3. **Scalability**: By using signals and slots, you can easily add new features to the program without modifying existing code.
+
+## Implementing Signal and Slot Connection
+
+### Defining the Counter Variable in the Header File
+
+Open `mainwindow.h` and add an integer member variable `clickCount` in the private section of the main window class to store the number of button clicks:
 
 ```cpp
 private:
-    int clickCount;  // 计数器变量
+    int clickCount;  // Counter variable
 ```
 
 ![image-20240929130732316](README.assets/image-20240929130732316.png)
 
-## 初始化计数器
+### Initializing the Counter
 
-在`mainwindow.cpp`的构造函数中初始化计数器变量：
+In the `mainwindow.cpp` constructor, initialize the counter variable:
 
 ```cpp
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , clickCount(0)  // 初始化点击次数
+    , clickCount(0)  // Initialize click count
 {
     ui->setupUi(this);
 }
 ```
 
-下图中红色为修改行：
+The red text in the image below indicates the modified lines:
 
 ![image-20240929163154968](README.assets/image-20240929163154968.png)
 
-## 编写槽函数
+### Writing the Slot Function
 
-接下来，在`mainwindow.cpp`中编写槽函数，当按钮被点击时触发，更新计数并显示在标签中：
+Next, write a slot function in `mainwindow.cpp` that triggers when the button is clicked, increments the counter, and updates the label:
 
 ```cpp
 void MainWindow::on_pushButton_clicked()
 {
-    clickCount++;  // 点击次数加1
-    ui->label->setText("Number: " + QString::number(clickCount));  // 更新标签显示
+    clickCount++;  // Increment the click count
+    ui->label->setText("Number: " + QString::number(clickCount));  // Update the label display
 }
 ```
 
 ![image-20240929163243460](README.assets/image-20240929163243460.png)
 
-完成代码编写后，Ctrl+S保存变更。
+After writing the code, save the changes with Ctrl+S.
 
-## 连接信号与槽
+### Connecting Signals and Slots
 
-在Qt Designer中，你可以右键点击按钮，选择“转到槽”，然后选择`clicked()`信号，Qt会自动在代码中生成槽函数的声明。
+In Qt Designer, you can right-click the button, choose “Go to Slot,” and then select the `clicked()` signal. Qt will automatically generate the slot function declaration in the code.
 
 ![image-20240929154419028](README.assets/image-20240929154419028.png)
 
 ![image-20240929154520655](README.assets/image-20240929154520655.png)
 
-当然，如果你想手动连接信号与槽，也可以在构造函数中使用以下代码：
+Alternatively, if you prefer to connect signals and slots manually, you can use the following code in the constructor:
 
 ```cpp
 connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
 ```
 
-这段代码表示，当按钮被点击时，`clicked()`信号被触发，继而执行`on_pushButton_clicked()`槽函数。
+This code specifies that when the button is clicked, the `clicked()` signal is emitted, and the `on_pushButton_clicked()` slot function is executed.
 
-# 编译与运行项目
+## Compiling and Running the Project
 
-Qt Creator会自动配置Cmake，无需手动编写。笔者的Creator左下角的运行调试编译的按钮是灰色的。
+Qt Creator will automatically configure CMake, so there is no need for manual configuration. In the author's case, the run and debug buttons in the bottom left of Creator were grayed out.
 
-**如果你的按钮是彩色的，则不需要排查Cmake配置错误的操作。**
+**If your buttons are active**, you do not need to troubleshoot CMake configuration errors.
 
-> 查看报错信息发现我的Ubuntu缺少OpenGL相关的库，而这些库是Qt6的Qt6Gui和Qt6Widgets组件的依赖项。
+> Upon inspection, it was discovered that some OpenGL-related libraries required by Qt6’s Qt6Gui and Qt6Widgets components were missing in Ubuntu.
 >
 > ![image-20240929161937702](README.assets/image-20240929161937702.png)
 >
-> 在终端执行：
+> To install these libraries, execute the following command in the terminal:
 >
 > ```bash
 > sudo apt install libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev
 > ```
 >
-> 安装完成后重启相应服务，输入`1 2 3 4`并回车。
+> After installation, restart the appropriate services and press `1 2 3 4` followed by Enter.
 >
-> 重新打开Qt，打开文件或工程，选择项目的Cmake文件，此时Creator会自动配置Cmake，三个按钮已经变成彩色。
+> Reopen Qt, open the project, and select the CMake file. Qt Creator will automatically configure CMake, and the three buttons will become active.
 >
 > ![image-20240929162719103](README.assets/image-20240929162719103.png)
 
-点击“运行”按钮，Qt Creator会编译项目并启动应用程序。点击按钮时，标签中的点击次数会随着按钮点击而更新。
+Click the “Run” button, and Qt Creator will compile the project and launch the application. As you click the button, the label will update to reflect the new click count.
 
 ![image-20240929163500625](README.assets/image-20240929163500625.png)
 
-# 实验发挥部分
+## Experiment Extension
 
-## 图片切换器
+### Image Switcher
 
-点击按钮依次切换显示不同的图片。
+Click the button to cycle through and display different images.
 
-## 滑块与进度条同步
+### Slider and Progress Bar Synchronization
 
-滑块的值实时反映在进度条上，滑动时同步更新。
+The value of the slider is reflected in the progress bar, updating in real time as the slider moves.
 
-## 弹出对话框
+### Popup Dialog
 
-点击按钮后，弹出消息框或确认对话框。
+Click the button to display a message box or confirmation dialog.
 
-## 复选框启用按钮
+### Checkbox-Enabled Button
 
-当选中复选框时，按钮被启用，取消勾选则禁用按钮。
+When the checkbox is selected, the button is enabled; when unchecked, the button is disabled.
 
-# 小组协作
+## Group Collaboration
 
-| 姓名 | 安装Ubuntu | Git协作 | Markdown语法 | Linux基础 | Qt安装 | 信号与槽 | 自主发挥 |
-| ---- | ---------- | ------- | ------------ | --------- | ------ | -------- | -------- |
-|      |            |         |              |           |        |          |          |
-|      |            |         |              |           |        |          |          |
-|      |            |         |              |           |        |          |          |
-
-
-
+| Name | Installed Ubuntu | Git Collaboration | Markdown Syntax | Linux Basics | Qt Installation | Signals and Slots | Extension |
+| ---- | ---------------- | ----------------- | --------------- | ------------ | --------------- | ----------------- | --------- |
+|      |                  |                   |                 |              |                 |                   |           |
+|      |                  |                   |                 |              |                 |                   |           |
+|      |                  |                   |                 |              |                 |                   |           |
