@@ -379,6 +379,85 @@ void MainWindow::showImage(int index)
 
 滑块的值实时反映在进度条上，滑动时同步更新。
 
+### 创建项目
+
+首先，新建一个文件夹。
+
+然后，打开Qt Creator，按照以下步骤创建一个新的Qt Widgets应用程序：
+
+1. 在Qt Creator中点击“文件” -> “新建项目”。
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\a60f58d6cc469a0960a629253d829ed.png)
+
+2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\4c2bf56deae274050e65195bd7f5823.png)
+
+3. 设置项目名称，例如“slide”，并选择保存路径为刚刚新创建的文件夹，一直点下一步直到完成创建项目。
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\579da2736515b8cf1807b2a6bc06cf8.png)
+
+   ### 设计用户界面
+
+   1.点击```mainwindow.ui```进入Qt的可视化UI设计器，开始设置界面
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\bab35ee5a0409753e6f573783df911e.png)
+
+   2.在窗口中分别拖入一个“Line Edit”显示滑块所占百分比和一个“Horizontal Slider”表示滑块
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\56efa21cd2c1ffc71955d181ef2a6ea.png)
+
+   ### 连接信号与槽
+
+   1.右键编辑”Horizontal Slider“，选择“转到槽”，然后选择信号valueChanged（），在代码中生成并链接到槽函数。
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\c11dcd142e93253a312e1aeb3e90d78.png)
+
+   2.右键编辑”Line Edit“，选择“转到槽”，然后选择信号textChanged（），在代码中生成并链接到槽函数。
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\0e9b65cc7baa3d108805ea3f7bdaf97.png)
+
+   ### 编写槽函数
+
+   1.生成的槽函数如图所示
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\f70943065f84e3f6470655be80ac10f.png)
+
+   2.修改槽函数为
+
+   ```cpp
+   void MainWindow::on_horizontalSlider_valueChanged(int value)
+   {
+       ui->lineEdit->setText(QString("%1").arg(value));
+   }
+   
+   
+   void MainWindow::on_lineEdit_textChanged(const QString &arg1)
+   {
+       ui->horizontalSlider->setValue(arg1.toUInt());
+   }
+   
+   
+   ```
+
+   即如图所示：
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\a46a8456e7307953ec64054b037972f.png)
+
+   ### 编译与运行
+
+   点击运行键，出现如下图框。
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\4af8e539a3763b524acaf05c4a1abc6.png)
+
+   随着滑块的拖动，框中会实时出现滑块的进度为多少：
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\c8b4c9e42d604b216d0b57bc49d89f9.png)
+
+   同时，若在框中输入数字，滑块也会移动到相应的进度：
+
+   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\44b1d7b7404df55e3ad626bcbb2c03f.png)
+
 ## 弹出对话框
 
 点击按钮后，弹出消息框或确认对话框。
