@@ -225,6 +225,162 @@ Qt Creator会自动配置Cmake，无需手动编写。笔者的Creator左下角�
 ## 图片切换器
 
 点击按钮依次切换显示不同的图片。
+## 图片切换器
+
+点击按钮依次切换显示不同的图片。
+
+### 创建项目
+
+首先，新建一个文件夹。
+
+然后，打开Qt Creator，按照以下步骤创建一个新的Qt Widgets应用程序：
+
+1. 在Qt Creator中点击“文件” -> “新建项目”。
+2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
+3. 设置项目名称，例如“PictureSwitcher”，并选择保存路径为刚刚新创建的文件夹，一直点下一步直到完成创建项目。
+   ![image] (README.assets/屏幕截图 2024-10-07 111624.png)
+4. 把你需要切换的图片放在一个文件夹中，分别命名为1.jpg、2.jpg……，并将该文件夹移至项目目录所在文件夹中。
+
+### 设计用户界面
+
+打开`mainwindow.ui`，进入Qt的可视化UI设计器，按以下步骤设计界面：
+
+1. 从左侧的“Widget Box”中拖拽两个**Push Button**到中央界面，分别将按钮的`text`属性设置为"Previous"和"Next"分别表示前一张和下一张，并将属性中的**ObjectName**分别改为"btnPrev"和"btnNext"方便代码中定义和引用。
+
+   ![image](README.assets/屏幕截图 2024-10-07 130303.png)
+
+2. 再拖拽一个**Label**用于显示图片，默认显示文本可以全部删除。
+
+3. 调整按钮和标签的位置和大小，以确保布局合理。
+
+   ![image](README.assets/屏幕截图 2024-10-07 121601.png)
+
+设计完成后，记得保存UI设计（Ctrl+S）
+
+### 实现信号与槽连接
+
+#### 在头文件中定义变量
+
+打开`mainwindow.h`，添加QLabel和QPushButon的定义：
+
+```cpp
+#include <QLabel>
+#include <QPushButton
+```
+
+在类定义中添加槽和QLabel、QPushButton的定义：
+
+```cpp
+private slots:
+    void btnPrev_clicked();
+    void btnNext_clicked();
+
+private:
+    Ui::MainWindow *ui;
+    QLabel *label;
+    QPushButton *btnPrev;
+    QPushButton *btnNext;
+    int currentImageIndex;
+    void showImage(int index);
+```
+
+
+![image-20240929130732316]
+
+#### 图片资源导入
+
+在左侧侧边栏右键点击项目名称**PictureSwitcher**，点击添加新文件-->Qt-->Qt Resources File-->选择，文件名可以任意取，例如“Image”。
+
+![image](README.assets/屏幕截图 2024-10-07 121029.png)
+
+加载后左侧侧边栏会出现一个写有**资源**的文件夹，下附有**Image.qrc**的文件，右键点击**资源**-->添加现有文件，选择你要添加的图片文件,`确保该文件在之前放在项目目录文件夹中`
+
+![image](README.assets/屏幕截图 2024-10-07 121433.png)
+
+#### 初始化
+
+在`mainwindow.cpp`的构造函数中初始化变量：
+
+```cpp
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+    ,  currentImageIndex(0)  // 从第一张图片开始
+{
+    ui->setupUi(this);
+    label = ui->label; // 确保这是你的QLabel的名称
+    btnPrev = ui->btnPrev; // 确保这是你的QPushButton的名称
+    btnNext = ui->btnNext; // 确保这是你的QPushButton的名称
+
+    connect(btnPrev, &QPushButton::clicked, this, &MainWindow::btnPrev_clicked);//手动连接信号与槽
+    connect(btnNext, &QPushButton::clicked, this, &MainWindow::btnNext_clicked);
+
+    showImage(currentImageIndex);
+}
+```
+
+下图中红色为修改行：
+
+![image](README.assets/屏幕截图 2024-10-07 110049.png)
+
+#### 编写槽函数
+
+接下来，在`mainwindow.cpp`中编写槽函数，当按钮被点击时触发，进行图片切换：
+
+```cpp
+void MainWindow::btnPrev_clicked()
+{
+    // 当前索引减1，如果小于0，则变为最后一张图片的索引
+    currentImageIndex = (currentImageIndex > 0) ? currentImageIndex - 1 : 2;
+    showImage(currentImageIndex);
+}
+
+void MainWindow::btnNext_clicked()
+{
+    // 当前索引加1，如果大于最后一张图片的索引，则变为0
+    currentImageIndex = (currentImageIndex < 2) ? currentImageIndex + 1 : 0;
+    showImage(currentImageIndex);
+}
+
+void MainWindow::showImage(int index)
+{
+    // 构建图片路径
+    QString imagePath = QString(":/picSwitch/%1.jpg").arg(index + 1);//“:/picSwitch/%1.jpg”为图片路径，可以在左侧栏中右键查看并更换正确的图片路径
+    qDebug() << "Loading image:" << imagePath;
+    QPixmap pixmap(imagePath);
+    if (!pixmap.isNull()) {
+        // 调整图片大小以适应 QLabel，保持纵横比
+        QPixmap scaledPixmap = pixmap.scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        // 将调整大小后的图片设置到 QLabel 上，并居中显示
+        label->setPixmap(scaledPixmap);
+        label->setAlignment(Qt::AlignCenter); // 设置图片居中
+    } else {
+        qDebug() << "Failed to load image:" << imagePath;
+    }
+}
+```
+
+完成代码编写后，Ctrl+S保存变更。
+
+红色为更改部分
+
+![image](README.assets/屏幕截图 2024-10-07 110058.png)
+
+#### 连接信号与槽
+
+在初始化步骤中已经进行了信号与槽的手动连接
+
+这段代码表示，当按钮被点击时，`clicked()`信号被触发，继而执行`on_pushButton_clicked()`槽函数。
+
+你也可以在Qt Designer中，右键点击按钮，选择“转到槽”，然后选择`clicked()`信号，Qt会自动在代码中生成槽函数的声明。
+
+#### 编译与运行
+
+点击左下侧的绿色三角，即可开始编译运行
+
+弹出一个运行框，点击**Previous**可以回到上一张图片，点击**Next**可以切换至下一张图片
+
+![image](README.assets/屏幕截图 2024-10-07 121601.png)
 
 ## 滑块与进度条同步
 
