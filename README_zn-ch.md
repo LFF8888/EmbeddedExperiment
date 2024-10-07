@@ -387,6 +387,76 @@ void MainWindow::showImage(int index)
 
 当选中复选框时，按钮被启用，取消勾选则禁用按钮。
 
+## 多按钮颜色切换
+
+点击不同按钮时，改变窗口颜色。
+
+### 创建项目
+
+1.打开Qt，点击创建项目，选择“Qt Widgets Application”
+
+![](README.assets\屏幕截图 2024-10-05 185848.png)
+
+2.设置项目名称如“PushButton_SwitchColor”,并选择保存路径。
+
+![命名](README.assets\屏幕截图 2024-10-05 190058.png)
+
+3.接下来的选项保持默认，点击下一步直到创建成功
+
+### 设计用户界面
+
+1.点击```mainwindow.ui```进入Qt的可视化UI设计器，开始设置界面
+
+![UI设计](README.assets\屏幕截图 2024-10-05 190524.png)
+
+2.点击窗口输入栏，改变窗口名称，使功能说明更清晰。
+
+![设置窗口名称](README.assets\屏幕截图 2024-10-05 191239.png)
+
+3.从左侧的“Widget Box”中拖拽若干个**Push Button**到中央界面,并在属性编辑栏中找到```text```栏，更改按钮名称。
+
+![功能按键](README.assets\屏幕截图 2024-10-05 191456.png)
+
+4.在“对象查看器”一栏中找到按钮对应的组件，将其的代称改为对应颜色，方便编写槽函数。
+
+![对象命名](README.assets\屏幕截图 2024-10-05 191854.png)
+
+### 连接信号与槽
+
+1.右键编辑按钮，选择“转到槽”，然后选择`clicked()`信号，在代码中生成并链接到槽函数。
+
+![信号与槽](README.assets\屏幕截图 2024-10-05 192148.png)
+
+![槽](D:\github\EmbeddedExperiment\README.assets\image-20240929154520655.png)
+
+### 编写槽函数
+
+1.生成的槽函数如图所示，函数的声明中显示了对应的颜色名称，方便调整代码。
+
+![槽函数](D:\github\EmbeddedExperiment\README.assets\屏幕截图 2024-10-05 192449.png)
+
+2.编写槽函数，使按下按钮时背景颜色改变：
+
+​	```this->setStyleSheet("QMainWindow{background-color:rgba( , , , );}");```
+
+​	括号内填入颜色参数来改变背景颜色。
+
+​	完成代码编写后，Ctrl+S保存变更。
+
+![代码](README.assets\屏幕截图 2024-10-05 192704.png)
+
+### 编译与运行
+
+点击运行键，出现带有提示的窗口：
+
+![窗口](README.assets\屏幕截图 2024-10-05 192914.png)
+
+按下按钮，背景变为对应的颜色
+
+![](README.assets\屏幕截图 2024-10-05 192925.png)
+
+![](README.assets\屏幕截图 2024-10-05 192939.png)
+
 # 小组协作
 
 | 姓名 | 安装Ubuntu | Git协作 | Markdown语法 | Linux基础 | Qt安装 | 信号与槽 | 自主发挥 |
