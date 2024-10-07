@@ -223,102 +223,105 @@ Qt Creator会自动配置Cmake，无需手动编写。笔者的Creator左下角�
 # 实验发挥部分
 ## 图片切换器
 
-点击按钮依次切换显示不同的图片。
+点击按钮，依次切换显示不同的图片。
 
-### 创建项目
+### 1. 创建项目
 
-首先，新建一个文件夹。
+首先，创建一个文件夹以存放项目文件。
 
-然后，打开Qt Creator，按照以下步骤创建一个新的Qt Widgets应用程序：
+接着，打开 Qt Creator，按照以下步骤创建一个新的 Qt Widgets 应用程序：
 
-1. 在Qt Creator中点击“文件” -> “新建项目”。
+1. 在 Qt Creator 中点击“文件” -> “新建项目”。
 2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
-3. 设置项目名称，例如“PictureSwitcher”，并选择保存路径为刚刚新创建的文件夹，一直点下一步直到完成创建项目。
+3. 设置项目名称，例如“PictureSwitcher”，选择保存路径为刚创建的文件夹，一直点击“下一步”直到完成项目创建。
+
    ![image](README.assets/屏幕截图2024-10-07111624.png)
-4. 把你需要切换的图片放在一个文件夹中，分别命名为1.jpg、2.jpg……，并将该文件夹移至项目目录所在文件夹中。
 
-### 设计用户界面
+4. 将需要切换的图片放在一个文件夹中，分别命名为 1.jpg、2.jpg……，并将该文件夹移动到项目目录中。
 
-打开`mainwindow.ui`，进入Qt的可视化UI设计器，按以下步骤设计界面：
+### 2. 设计用户界面
 
-1. 从左侧的“Widget Box”中拖拽两个**Push Button**到中央界面，分别将按钮的`text`属性设置为"Previous"和"Next"分别表示前一张和下一张，并将属性中的**ObjectName**分别改为"btnPrev"和"btnNext"方便代码中定义和引用。
+打开 `mainwindow.ui` 文件，进入 Qt 的可视化 UI 设计器，按以下步骤设计界面：
+
+1. 从左侧的“Widget Box”中拖拽两个**按钮（Push Button）**到界面中央，分别将按钮的 `text` 属性设置为“Previous”和“Next”，表示前一张和下一张图片。同时，将它们的 **ObjectName** 分别设置为“btnPrev”和“btnNext”，方便后续代码定义与引用。
 
    ![image](README.assets/屏幕截图2024-10-07130303.png)
 
-2. 再拖拽一个**Label**用于显示图片，默认显示文本可以全部删除。
+2. 再拖拽一个**标签（Label）**，用于显示图片，默认的文本可以删除。
 
-3. 调整按钮和标签的位置和大小，以确保布局合理。
+3. 调整按钮和标签的位置和大小，以确保界面布局合理。
 
    ![image](README.assets/屏幕截图2024-10-07121601.png)
 
-设计完成后，记得保存UI设计（Ctrl+S）
+设计完成后，记得保存（Ctrl+S）。
 
-### 实现信号与槽连接
+### 3. 实现信号与槽连接
 
 #### 在头文件中定义变量
 
-打开`mainwindow.h`，添加QLabel和QPushButon的定义：
+打开 `mainwindow.h` 文件，添加 QLabel 和 QPushButton 的定义：
 
 ```cpp
 #include <QLabel>
-#include <QPushButton
+#include <QPushButton>
 ```
 
-在类定义中添加槽和QLabel、QPushButton的定义：
+在类定义中添加槽函数、QLabel 和 QPushButton 的定义：
 
 ```cpp
 private slots:
-    void btnPrev_clicked();
-    void btnNext_clicked();
+    void btnPrev_clicked(); // 点击“Previous”按钮的槽函数
+    void btnNext_clicked(); // 点击“Next”按钮的槽函数
 
 private:
     Ui::MainWindow *ui;
-    QLabel *label;
-    QPushButton *btnPrev;
-    QPushButton *btnNext;
-    int currentImageIndex;
-    void showImage(int index);
+    QLabel *label; // 用于显示图片的标签
+    QPushButton *btnPrev; // “Previous”按钮
+    QPushButton *btnNext; // “Next”按钮
+    int currentImageIndex; // 当前显示图片的索引
+    void showImage(int index); // 显示图片的函数
 ```
 
 #### 图片资源导入
 
-在左侧侧边栏右键点击项目名称**PictureSwitcher**，点击添加新文件-->Qt-->Qt Resources File-->选择，文件名可以任意取，例如“Image”。
+在项目的左侧侧边栏中，右键点击项目名称**PictureSwitcher**，选择“添加新文件”-->“Qt”-->“Qt Resources File”，文件名可以任意命名，例如“Image”。
 
 ![image](README.assets/屏幕截图2024-10-07121029.png)
 
-加载后左侧侧边栏会出现一个写有**资源**的文件夹，下附有**Image.qrc**的文件，右键点击**资源**-->添加现有文件，选择你要添加的图片文件,`确保该文件在之前放在项目目录文件夹中`
+加载资源文件后，左侧会出现一个**资源文件夹**，下附有**Image.qrc**文件，右键点击“资源”-->“添加现有文件”，选择要添加的图片文件。确保这些图片文件已经放在项目目录的文件夹中。
 
 ![image](README.assets/屏幕截图2024-10-07121433.png)
 
 #### 初始化
 
-在`mainwindow.cpp`的构造函数中初始化变量：
+在 `mainwindow.cpp` 构造函数中初始化变量：
 
 ```cpp
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    ,  currentImageIndex(0)  // 从第一张图片开始
+    , currentImageIndex(0)  // 从第一张图片开始
 {
     ui->setupUi(this);
-    label = ui->label; // 确保这是你的QLabel的名称
-    btnPrev = ui->btnPrev; // 确保这是你的QPushButton的名称
-    btnNext = ui->btnNext; // 确保这是你的QPushButton的名称
+    label = ui->label; // 设置 QLabel 变量
+    btnPrev = ui->btnPrev; // 设置“Previous”按钮变量
+    btnNext = ui->btnNext; // 设置“Next”按钮变量
 
-    connect(btnPrev, &QPushButton::clicked, this, &MainWindow::btnPrev_clicked);//手动连接信号与槽
+    // 连接按钮与槽函数
+    connect(btnPrev, &QPushButton::clicked, this, &MainWindow::btnPrev_clicked);
     connect(btnNext, &QPushButton::clicked, this, &MainWindow::btnNext_clicked);
 
-    showImage(currentImageIndex);
+    showImage(currentImageIndex); // 初始化显示第一张图片
 }
 ```
 
-下图中红色为修改行：
+红色为修改行：
 
 ![image](README.assets/屏幕截图2024-10-07110049.png)
 
 #### 编写槽函数
 
-接下来，在`mainwindow.cpp`中编写槽函数，当按钮被点击时触发，进行图片切换：
+接下来，在 `mainwindow.cpp` 文件中编写槽函数，当按钮被点击时，切换图片：
 
 ```cpp
 void MainWindow::btnPrev_clicked()
@@ -338,131 +341,127 @@ void MainWindow::btnNext_clicked()
 void MainWindow::showImage(int index)
 {
     // 构建图片路径
-    QString imagePath = QString(":/picSwitch/%1.jpg").arg(index + 1);//“:/picSwitch/%1.jpg”为图片路径，可以在左侧栏中右键查看并更换正确的图片路径
-    qDebug() << "Loading image:" << imagePath;
-    QPixmap pixmap(imagePath);
+    QString imagePath = QString(":/picSwitch/%1.jpg").arg(index + 1); // “:/picSwitch/%1.jpg”为图片路径
+    qDebug() << "加载图片:" << imagePath;
+    QPixmap pixmap(imagePath); // 加载图片
     if (!pixmap.isNull()) {
         // 调整图片大小以适应 QLabel，保持纵横比
         QPixmap scaledPixmap = pixmap.scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        // 将调整大小后的图片设置到 QLabel 上，并居中显示
-        label->setPixmap(scaledPixmap);
-        label->setAlignment(Qt::AlignCenter); // 设置图片居中
+        label->setPixmap(scaledPixmap); // 将图片设置到 QLabel 上
+        label->setAlignment(Qt::AlignCenter); // 图片居中显示
     } else {
-        qDebug() << "Failed to load image:" << imagePath;
+        qDebug() << "加载图片失败:" << imagePath;
     }
 }
 ```
 
-完成代码编写后，Ctrl+S保存变更。
+完成代码编写后，按 Ctrl+S 保存变更。
 
-红色为更改部分
+红色为更改部分：
 
 ![image](README.assets/屏幕截图2024-10-07110058.png)
 
-#### 连接信号与槽
+### 4. 连接信号与槽
 
-在初始化步骤中已经进行了信号与槽的手动连接
+在初始化步骤中已经手动连接了信号与槽。这段代码表示，当按钮被点击时，`clicked()` 信号触发，执行对应的槽函数。
 
-这段代码表示，当按钮被点击时，`clicked()`信号被触发，继而执行`on_pushButton_clicked()`槽函数。
+你也可以在 Qt Designer 中右键点击按钮，选择“转到槽”，然后选择 `clicked()` 信号，Qt 会自动生成槽函数声明。
 
-你也可以在Qt Designer中，右键点击按钮，选择“转到槽”，然后选择`clicked()`信号，Qt会自动在代码中生成槽函数的声明。
+### 5. 编译与运行
 
-#### 编译与运行
+点击左下角的绿色三角按钮，开始编译并运行项目。
 
-点击左下侧的绿色三角，即可开始编译运行
-
-弹出一个运行框，点击**Previous**可以回到上一张图片，点击**Next**可以切换至下一张图片
+弹出一个窗口，点击**Previous**可以回到上一张图片，点击**Next**可以切换到下一张图片。
 
 ![image](README.assets/屏幕截图2024-10-07121601.png)
+
+以下是修改后的文档，确保标题分级不超过三级，并且内容更通俗易懂，同时保留了操作顺序和中文注释：
 
 ## 滑块与进度条同步
 
 滑块的值实时反映在进度条上，滑动时同步更新。
 
-### 创建项目
+### 1. 创建项目
 
-首先，新建一个文件夹。
+首先，创建一个文件夹来存放项目文件。
 
-然后，打开Qt Creator，按照以下步骤创建一个新的Qt Widgets应用程序：
+然后，打开 Qt Creator，按照以下步骤创建一个新的 Qt Widgets 应用程序：
 
-1. 在Qt Creator中点击“文件” -> “新建项目”。
+1. 在 Qt Creator 中点击“文件” -> “新建项目”。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\a60f58d6cc469a0960a629253d829ed.png)
+   ![](README.assets/a60f58d6cc469a0960a629253d829ed.png)
 
 2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\4c2bf56deae274050e65195bd7f5823.png)
+   ![](README.assets/4c2bf56deae274050e65195bd7f5823.png)
 
-3. 设置项目名称，例如“slide”，并选择保存路径为刚刚新创建的文件夹，一直点下一步直到完成创建项目。
+3. 设置项目名称，例如“slide”，选择保存路径为刚创建的文件夹，一直点击“下一步”直到完成项目创建。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\579da2736515b8cf1807b2a6bc06cf8.png)
+   ![](README.assets/579da2736515b8cf1807b2a6bc06cf8.png)
 
-   ### 设计用户界面
+### 2. 设计用户界面
 
-   1.点击```mainwindow.ui```进入Qt的可视化UI设计器，开始设置界面
+1. 点击 `mainwindow.ui` 进入 Qt 的可视化 UI 设计器，开始设置界面。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\bab35ee5a0409753e6f573783df911e.png)
+   ![](README.assets/bab35ee5a0409753e6f573783df911e.png)
 
-   2.在窗口中分别拖入一个“Line Edit”显示滑块所占百分比和一个“Horizontal Slider”表示滑块
+2. 在窗口中分别拖入一个“Line Edit”用于显示滑块的百分比，以及一个“Horizontal Slider”表示滑块。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\56efa21cd2c1ffc71955d181ef2a6ea.png)
+   ![](README.assets/56efa21cd2c1ffc71955d181ef2a6ea.png)
 
-   ### 连接信号与槽
+### 3. 连接信号与槽
 
-   1.右键编辑”Horizontal Slider“，选择“转到槽”，然后选择信号valueChanged（），在代码中生成并链接到槽函数。
+1. 右键点击“Horizontal Slider”，选择“转到槽”，然后选择信号 `valueChanged()`，在代码中生成并链接到槽函数。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\c11dcd142e93253a312e1aeb3e90d78.png)
+   ![](README.assets/c11dcd142e93253a312e1aeb3e90d78.png)
 
-   2.右键编辑”Line Edit“，选择“转到槽”，然后选择信号textChanged（），在代码中生成并链接到槽函数。
+2. 右键点击“Line Edit”，选择“转到槽”，然后选择信号 `textChanged()`，在代码中生成并链接到槽函数。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\0e9b65cc7baa3d108805ea3f7bdaf97.png)
+   ![](README.assets/0e9b65cc7baa3d108805ea3f7bdaf97.png)
 
-   ### 编写槽函数
+### 4. 编写槽函数
 
-   1.生成的槽函数如图所示
+1. 生成的槽函数如图所示。
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\f70943065f84e3f6470655be80ac10f.png)
+   ![](README.assets/f70943065f84e3f6470655be80ac10f.png)
 
-   2.修改槽函数为
+2. 修改槽函数为：
 
-   ```cpp
-   void MainWindow::on_horizontalSlider_valueChanged(int value)
-   {
-       ui->lineEdit->setText(QString("%1").arg(value));
-   }
-   
-   
-   void MainWindow::on_lineEdit_textChanged(const QString &arg1)
-   {
-       ui->horizontalSlider->setValue(arg1.toUInt());
-   }
-   
-   
-   ```
+```cpp
+void MainWindow::on_horizontalSlider_valueChanged(int value)
+{
+    ui->lineEdit->setText(QString("%1").arg(value)); // 更新 Line Edit 显示滑块值
+}
 
-   即如图所示：
+void MainWindow::on_lineEdit_textChanged(const QString &arg1)
+{
+    ui->horizontalSlider->setValue(arg1.toUInt()); // 根据输入更新滑块值
+}
+```
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\a46a8456e7307953ec64054b037972f.png)
+如图所示：
 
-   ### 编译与运行
+![](README.assets/a46a8456e7307953ec64054b037972f.png)
 
-   点击运行键，出现如下图框。
+### 5. 编译与运行
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\4af8e539a3763b524acaf05c4a1abc6.png)
+点击运行按钮，出现如下图框。
 
-   随着滑块的拖动，框中会实时出现滑块的进度为多少：
+![](README.assets/4af8e539a3763b524acaf05c4a1abc6.png)
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\c8b4c9e42d604b216d0b57bc49d89f9.png)
+随着滑块的拖动，框中会实时显示滑块的进度：
 
-   同时，若在框中输入数字，滑块也会移动到相应的进度：
+![](README.assets/c8b4c9e42d604b216d0b57bc49d89f9.png)
 
-   ![](D:\ruanjian\GitHub\EmbeddedExperiment\README.assets\44b1d7b7404df55e3ad626bcbb2c03f.png)
+同时，若在框中输入数字，滑块也会移动到相应的进度：
+
+![](README.assets/44b1d7b7404df55e3ad626bcbb2c03f.png)
 
 ## 弹出对话框
 
 点击按钮后，弹出消息框或确认对话框。
 
-# 创建项目
+### 1. 创建项目
 
 首先，打开Qt Creator，新建一个文件夹
 
@@ -478,7 +477,7 @@ void MainWindow::showImage(int index)
 
    **后续的选择页面保持默认**即可，继续点击“下一步”直到项目创建完成。
 
-设计用户界面
+### 2. 设计用户界面
 
 打开`mainwindow.ui`，进入Qt的可视化UI设计器，按以下步骤设计界面：
 
@@ -494,116 +493,111 @@ void MainWindow::showImage(int index)
 
 ![image](README.assets/屏幕截图2024-10-07184128.png)
 
+### 3. 编译运行
+
 ![image](README.assets/屏幕截图2024-10-07184150.png)
-
-## 复选框启用按钮
-
-当选中复选框时，按钮被启用，取消勾选则禁用按钮。
 
 ## 多按钮颜色切换
 
 点击不同按钮时，改变窗口颜色。
 
-### 创建项目
+### 1. 创建项目
 
-1.打开Qt，点击创建项目，选择“Qt Widgets Application”
+1. 打开 Qt，选择“Qt Widgets Application”来创建新项目。
 
-![](README.assets\屏幕截图 2024-10-05 185848.png)
+   ![](README.assets/屏幕截图 2024-10-05 185848.png)
 
-2.设置项目名称如“PushButton_SwitchColor”,并选择保存路径。
+2. 设置项目名称为“PushButton_SwitchColor”，并选择保存路径。
 
-![命名](README.assets\屏幕截图 2024-10-05 190058.png)
+   ![命名](README.assets/屏幕截图 2024-10-05 190058.png)
 
-3.接下来的选项保持默认，点击下一步直到创建成功
+3. 保持接下来的选项默认，点击“下一步”直到项目创建成功。
 
-### 设计用户界面
+### 2. 设计用户界面
 
-1.点击```mainwindow.ui```进入Qt的可视化UI设计器，开始设置界面
+1. 点击 `mainwindow.ui` 进入 Qt 的可视化 UI 设计器。
 
-![UI设计](README.assets\屏幕截图 2024-10-05 190524.png)
+   ![UI设计](README.assets/屏幕截图 2024-10-05 190524.png)
 
-2.点击窗口输入栏，改变窗口名称，使功能说明更清晰。
+2. 点击窗口标题栏，修改窗口名称，以更清晰地说明功能。
 
-![设置窗口名称](README.assets\屏幕截图 2024-10-05 191239.png)
+   ![设置窗口名称](README.assets/屏幕截图 2024-10-05 191239.png)
 
-3.从左侧的“Widget Box”中拖拽若干个**Push Button**到中央界面,并在属性编辑栏中找到```text```栏，更改按钮名称。
+3. 从“Widget Box”中拖拽若干个 **Push Button** 到中央界面，并在属性编辑栏中修改按钮名称。
 
-![功能按键](README.assets\屏幕截图 2024-10-05 191456.png)
+   ![功能按键](README.assets/屏幕截图 2024-10-05 191456.png)
 
-4.在“对象查看器”一栏中找到按钮对应的组件，将其的代称改为对应颜色，方便编写槽函数。
+4. 在“对象查看器”中找到每个按钮的组件，将其名称改为对应颜色，方便编写槽函数。
 
-![对象命名](README.assets\屏幕截图 2024-10-05 191854.png)
+   ![对象命名](README.assets/屏幕截图 2024-10-05 191854.png)
 
-### 连接信号与槽
+### 3. 连接信号与槽
 
-1.右键编辑按钮，选择“转到槽”，然后选择`clicked()`信号，在代码中生成并链接到槽函数。
+1. 右键点击按钮，选择“转到槽”，然后选择 `clicked()` 信号，生成并链接到槽函数。
 
-![信号与槽](README.assets\屏幕截图 2024-10-05 192148.png)
+   ![信号与槽](README.assets/屏幕截图 2024-10-05 192148.png)
 
-![槽](D:\github\EmbeddedExperiment\README.assets\image-20240929154520655.png)
+   ![槽](README.assets/image-20240929154520655.png)
 
-### 编写槽函数
+### 4. 编写槽函数
 
-1.生成的槽函数如图所示，函数的声明中显示了对应的颜色名称，方便调整代码。
+1. 生成的槽函数如下，函数声明中显示了对应的颜色名称。
 
-![槽函数](D:\github\EmbeddedExperiment\README.assets\屏幕截图 2024-10-05 192449.png)
+   ![槽函数](README.assets/屏幕截图 2024-10-05 192449.png)
 
-2.编写槽函数，使按下按钮时背景颜色改变：
+2. 编写槽函数，当按下按钮时改变背景颜色：
 
-​	```this->setStyleSheet("QMainWindow{background-color:rgba( , , , );}");```
+```cpp
+this->setStyleSheet("QMainWindow{background-color:rgba( , , , );}"); // 填入颜色参数
+```
 
-​	括号内填入颜色参数来改变背景颜色。
+完成后，记得 Ctrl+S 保存变更。
 
-​	完成代码编写后，Ctrl+S保存变更。
+![代码](README.assets/屏幕截图 2024-10-05 192704.png)
 
-![代码](README.assets\屏幕截图 2024-10-05 192704.png)
+### 5. 编译与运行
 
-### 编译与运行
+点击运行按钮，出现带有提示的窗口：
 
-点击运行键，出现带有提示的窗口：
+![窗口](README.assets/屏幕截图 2024-10-05 192914.png)
 
-![窗口](README.assets\屏幕截图 2024-10-05 192914.png)
+按下按钮，背景会变为对应的颜色：
 
-按下按钮，背景变为对应的颜色
+![](README.assets/屏幕截图 2024-10-05 192925.png)
 
-![](README.assets\屏幕截图 2024-10-05 192925.png)
-
-![](README.assets\屏幕截图 2024-10-05 192939.png)
-
+![](README.assets/屏幕截图 2024-10-05 192939.png)
 
 ## 定时器倒计时
 
-通过信号与槽连接实现倒计时功能，时间结束后发出提示
+通过信号与槽连接实现倒计时功能，时间结束后发出提示。
 
-### 创建项目
+### 1. 创建项目
 
-首先，新建一个文件夹。
+首先，新建一个文件夹，然后打开 Qt Creator，按照以下步骤创建新的 Qt Widgets 应用程序：
 
-然后，打开Qt Creator，按照以下步骤创建一个新的Qt Widgets应用程序：
+1. 在 Qt Creator 中点击“文件” -> “新建项目”。
+2. 选择“应用程序”下的“Qt Widgets Application”。
+3. 设置项目名称为“Timer0”，选择保存路径，并点击“下一步”完成创建。
 
-1. 在Qt Creator中点击“文件” -> “新建项目”。
-2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
-3. 设置项目名称，例如“Timer0”，并选择保存路径为刚刚新创建的文件夹，一直点下一步直到完成创建项目.
-     ![image](README.assets/秦晨阳/Qcy1.png)
-### 设计用户界面
+   ![image](README.assets/秦晨阳/Qcy1.png)
 
-打开`mainwindow.ui`，进入Qt的可视化UI设计器，按以下步骤设计界面：
+### 2. 设计用户界面
 
-1.从左侧的“Widget Box”中拖拽一个Push Button到中央界面，用以启动定时器，且当定时器计数为0时，显示出Time up，以提示用户定时器已完成定时.
-2.再拖拽一个LcdNumber用于显示定时器上的数字，默认定时器初始值为10.
-3.调整按钮和标签的位置和大小，以确保布局合理。
+打开 `mainwindow.ui`，进入 Qt 的可视化 UI 设计器，按以下步骤设计界面：
 
-![image](README.assets/秦晨阳/Qcy2.png)
-    
-设计完成后，记得保存UI设计（Ctrl+S）
+1. 拖拽一个 **Push Button** 用于启动定时器，当定时器计数为0时，显示 “Time up” 提示用户。
+2. 再拖拽一个 **LcdNumber** 用于显示定时器数字，默认初始值为10。
+3. 调整按钮和标签的位置与大小，以确保布局合理。
 
-### 实现信号与槽连接
+   ![image](README.assets/秦晨阳/Qcy2.png)
 
-#### 在头文件中添加头文件并定义变量定义变量
+设计完成后，记得保存（Ctrl+S）。
 
-   ![image](README.assets/秦晨阳/Qcy4.png)
-   
-在类定义中添加槽的定义：
+### 3. 实现信号与槽连接
+
+#### 在头文件中添加定义
+
+在类定义中添加槽的声明：
 
 ```cpp
 class MainWindow : public QMainWindow
@@ -626,9 +620,10 @@ private slots:
     void on_pushButton_clicked();
 };
 ```
+
 #### 初始化
 
-在`mainwindow.cpp`的构造函数中初始化变量：
+在 `mainwindow.cpp` 的构造函数中初始化变量：
 
 ```cpp
 MainWindow::MainWindow(QWidget *parent)
@@ -636,25 +631,16 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     ui->lineEdit->setReadOnly(true);
-    QTimer *timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(currentTimerUpdate()));
-    timer->start(1000);
-    currentTimerUpdate();
 
-    connect(timer1,SIGNAL(timeout()),this,SLOT(timer1Update()));
-    connect(timer2,SIGNAL(timeout()),this,SLOT(timer2Update()));
-
+    connect(timer1, SIGNAL(timeout()), this, SLOT(timer1Update()));
     timer1->setInterval(1000);
-    timer2->setInterval(100);
 }
-
 ```
 
 #### 编写槽函数
 
-接下来，在`mainwindow.cpp`中编写槽函数，当按钮被点击时触发，进行图片切换：
+编写槽函数，当按钮被点击时触发，更新数字：
 
 ```cpp
 void MainWindow::currentTimerUpdate()
@@ -669,9 +655,10 @@ void MainWindow::timer1Update()
     num += 1;
     ui->lcdNumber->display(num);
 }
+
 void MainWindow::on_pushButton_clicked()
 {
-    if(!timer1->isActive())
+    if (!timer1->isActive())
     {
         timer1->start();
         ui->pushButton->setText("stop");
@@ -684,24 +671,23 @@ void MainWindow::on_pushButton_clicked()
 }
 ```
 
-完成代码编写后，Ctrl+S保存变更。
+完成后，记得 Ctrl+S 保存变更。
 
 #### 连接信号与槽
 
-在Qt Designer中，右键点击按钮，选择“转到槽”，然后选择`clicked()`信号，Qt会自动在代码中生成槽函数的声明。
+在 Qt Designer 中，右键点击按钮，选择“转到槽”，然后选择 `clicked()` 信号，Qt 会自动生成槽函数的声明。
 
+### 4. 编译与运行
 
-#### 编译与运行
+点击左下侧的运行按钮编译运行程序。
 
-点击左下侧的运行按钮,对该程序进行编译运行.
+点击按钮后，定时器开始计时，此时按钮文本变为“stop”。
 
-点击Start之后.定时器开始定时.此时click按键变成'stop'.
+![image](README.assets/秦晨阳/Qcy7.png)
 
- ![image](README.assets/秦晨阳/Qcy7.png)
+当 **lcdNumber** 上的数字跳跃到 0 时，弹出 “Time up” 提示用户定时已完成。
 
-当lcdnumber上的数字跳跃到0时，按钮上会弹出Time up提示用户定时已完成
-
- ![image](README.assets/秦晨阳/Qcy8.png)
+![image](README.assets/秦晨阳/Qcy8.png)
 
 # 小组协作
 
