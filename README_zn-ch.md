@@ -699,6 +699,7 @@ void MainWindow::on_pushButton_clicked()
 点击左下侧的运行按钮,对该程序进行编译运行.
 
 点击Start之后.定时器开始定时.此时click按键变成'stop'.
+
  ![image](README.assets/秦晨阳/Qcy7.png)
 
 当lcdnumber上的数字跳跃到0时，按钮上会弹出Time up提示用户定时已完成
