@@ -570,9 +570,6 @@ void MainWindow::showImage(int index)
 
 ![](README.assets\屏幕截图 2024-10-05 192939.png)
 
-## 图片切换器
-
-点击按钮依次切换显示不同的图片。
 
 ## 定时器倒计时
 
