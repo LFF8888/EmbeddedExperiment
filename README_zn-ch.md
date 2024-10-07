@@ -462,6 +462,40 @@ void MainWindow::showImage(int index)
 
 点击按钮后，弹出消息框或确认对话框。
 
+# 创建项目
+
+首先，打开Qt Creator，新建一个文件夹
+
+1. 在Qt Creator中点击“文件” -> “新建项目”。
+
+   
+
+2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
+
+   
+
+3. 设置项目名称，例如“inputwin”，并选择保存路径。
+
+   **后续的选择页面保持默认**即可，继续点击“下一步”直到项目创建完成。
+
+设计用户界面
+
+打开`mainwindow.ui`，进入Qt的可视化UI设计器，按以下步骤设计界面：
+
+1. 从左侧的“Widget Box”中拖拽一个**Push Button**到中央界面，并将按钮的`text`属性设置为“inputwin”。
+
+2. 再拖拽一个**Label**
+
+3. 调整按钮和标签的位置和大小，以确保布局合理。
+
+设计完成后，记得保存UI设计（Ctrl+S）。
+
+![image](README.assets/屏幕截图2024-10-07183547.png)
+
+![image](README.assets/屏幕截图2024-10-07184128.png)
+
+![image](README.assets/屏幕截图2024-10-07184150.png)
+
 ## 复选框启用按钮
 
 当选中复选框时，按钮被启用，取消勾选则禁用按钮。
