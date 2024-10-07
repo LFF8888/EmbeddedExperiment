@@ -570,6 +570,141 @@ void MainWindow::showImage(int index)
 
 ![](README.assets\屏幕截图 2024-10-05 192939.png)
 
+## 图片切换器
+
+点击按钮依次切换显示不同的图片。
+
+## 定时器倒计时
+
+通过信号与槽连接实现倒计时功能，时间结束后发出提示
+
+### 创建项目
+
+首先，新建一个文件夹。
+
+然后，打开Qt Creator，按照以下步骤创建一个新的Qt Widgets应用程序：
+
+1. 在Qt Creator中点击“文件” -> “新建项目”。
+2. 在弹出的窗口中，选择“应用程序”下的“Qt Widgets Application”。
+3. 设置项目名称，例如“Timer0”，并选择保存路径为刚刚新创建的文件夹，一直点下一步直到完成创建项目.
+     ![image](README.assets/秦晨阳/Qcy1.png)
+### 设计用户界面
+
+打开`mainwindow.ui`，进入Qt的可视化UI设计器，按以下步骤设计界面：
+
+1.从左侧的“Widget Box”中拖拽一个Push Button到中央界面，用以启动定时器，且当定时器计数为0时，显示出Time up，以提示用户定时器已完成定时.
+2.再拖拽一个LcdNumber用于显示定时器上的数字，默认定时器初始值为10.
+3.调整按钮和标签的位置和大小，以确保布局合理。
+
+![image](README.assets/秦晨阳/Qcy2.png)
+    
+设计完成后，记得保存UI设计（Ctrl+S）
+
+### 实现信号与槽连接
+
+#### 在头文件中添加头文件并定义变量定义变量
+
+   ![image](README.assets/秦晨阳/Qcy4.png)
+   
+在类定义中添加槽的定义：
+
+```cpp
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+    QTimer *timer1 = new QTimer(this);
+    QTimer *timer2 = new QTimer(this);
+
+private:
+    Ui::MainWindow *ui;
+
+private slots:
+    void currentTimerUpdate();
+    void timer1Update();
+    void on_pushButton_clicked();
+};
+```
+#### 初始化
+
+在`mainwindow.cpp`的构造函数中初始化变量：
+
+```cpp
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+
+    ui->lineEdit->setReadOnly(true);
+    QTimer *timer = new QTimer(this);
+    connect(timer,SIGNAL(timeout()),this,SLOT(currentTimerUpdate()));
+    timer->start(1000);
+    currentTimerUpdate();
+
+    connect(timer1,SIGNAL(timeout()),this,SLOT(timer1Update()));
+    connect(timer2,SIGNAL(timeout()),this,SLOT(timer2Update()));
+
+    timer1->setInterval(1000);
+    timer2->setInterval(100);
+}
+
+```
+
+#### 编写槽函数
+
+接下来，在`mainwindow.cpp`中编写槽函数，当按钮被点击时触发，进行图片切换：
+
+```cpp
+void MainWindow::currentTimerUpdate()
+{
+    QDateTime currenttime = QDateTime::currentDateTime();
+    ui->lineEdit->setText(currenttime.toString("yyyy.MM.dd  hh:mm:ss  dddd"));
+}
+
+void MainWindow::timer1Update()
+{
+    int num = ui->lcdNumber->value();
+    num += 1;
+    ui->lcdNumber->display(num);
+}
+void MainWindow::on_pushButton_clicked()
+{
+    if(!timer1->isActive())
+    {
+        timer1->start();
+        ui->pushButton->setText("stop");
+    }
+    else
+    {
+        timer1->stop();
+        ui->pushButton->setText("continue");
+    }
+}
+```
+
+完成代码编写后，Ctrl+S保存变更。
+
+#### 连接信号与槽
+
+在Qt Designer中，右键点击按钮，选择“转到槽”，然后选择`clicked()`信号，Qt会自动在代码中生成槽函数的声明。
+
+
+#### 编译与运行
+
+点击左下侧的运行按钮,对该程序进行编译运行.
+
+点击Start之后.定时器开始定时.此时click按键变成'stop'.
+ ![image](README.assets/秦晨阳/Qcy7.png)
+
+当lcdnumber上的数字跳跃到0时，按钮上会弹出Time up提示用户定时已完成
+
+ ![image](README.assets/秦晨阳/Qcy8.png)
+
 # 小组协作
 
 | 姓名 | 安装Ubuntu | Git协作 | Markdown语法 | Linux基础 | Qt安装 | 信号与槽 | 自主发挥 |
